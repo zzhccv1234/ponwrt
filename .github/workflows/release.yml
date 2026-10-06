@@ -109,6 +109,13 @@ jobs:
             grep -n -B25 -A8 "target/linux failed" build-full.log | head -140
             exit 1
           fi
+      - name: Show build errors
+        if: failure()
+        run: |
+          echo "===== FATAL ERRORS ====="
+          grep -nE "Error [0-9]+|fatal error|No such file|cannot (find|stat|access)|too big|too large|failed to build|Hunk #.*FAILED|undefined reference" build-full.log | grep -viE "warning:|: note:" | tail -60
+          echo "===== TARGET/LINUX FAIL CONTEXT ====="
+          grep -n -B35 -A12 "target/linux failed" build-full.log | tail -180
       - name: Pack ${{ matrix.target }}
         run: |
           mkdir release
