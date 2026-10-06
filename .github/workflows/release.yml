@@ -1,5 +1,4 @@
 name: Release PonWrt
-
 on:
   workflow_dispatch:
     inputs:
@@ -12,14 +11,11 @@ on:
         required: true
         default: true
         type: boolean
-
 permissions:
   contents: read
-
 concurrency:
   group: release-${{ inputs.tag }}
   cancel-in-progress: false
-
 jobs:
   build:
     name: Build ${{ matrix.target }}
@@ -32,15 +28,12 @@ jobs:
         target:
           - an7581
           - an7583
-
     steps:
       - uses: actions/checkout@v6
-
       - name: Free build space
         run: |
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc
           sudo apt-get clean
-
       - name: Install build dependencies
         env:
           DEBIAN_FRONTEND: noninteractive
@@ -56,7 +49,6 @@ jobs:
             python3 python3-docutils python3-pip python3-ply python3-pyelftools \
             qemu-utils re2c rsync scons squashfs-tools subversion swig texinfo \
             uglifyjs unzip wget xmlto xxd zlib1g-dev zstd
-
       - name: Cache downloads
         uses: actions/cache@v4
         with:
@@ -64,25 +56,23 @@ jobs:
           key: ponwrt-dl-${{ matrix.target }}-${{ hashFiles('feeds.conf.default', 'configs/*.config') }}
           restore-keys: |
             ponwrt-dl-${{ matrix.target }}-
-      
-      - name: Clone luci-app-airoha-npu
+      - name: Fetch extra luci packages
         run: |
-          git clone https://github.com/rchen14b/luci-app-airoha-npu.git package/luci-app-airoha-npu
-      
-      - name: Clone luci-app-lucky
+          mkdir -p /tmp/myfeeds
+          git clone https://github.com/rchen14b/luci-app-airoha-npu.git /tmp/myfeeds/luci-app-airoha-npu
+          chmod +x /tmp/myfeeds/luci-app-airoha-npu/files/usr/libexec/rpcd/luci.airoha_npu
+          git clone https://github.com/gdy666/luci-app-lucky.git /tmp/myfeeds/luci-app-lucky
+          git clone https://github.com/sirpdboy/luci-app-timecontrol.git /tmp/tc_tmp
+          mv /tmp/tc_tmp/luci-app-timecontrol /tmp/myfeeds/luci-app-timecontrol
+      - name: Setup custom feed
         run: |
-          git clone https://github.com/gdy666/luci-app-lucky.git package/luci-app-lucky
-      
-      - name: Clone luci-app-timecontrol
-        run: |
-          git clone https://github.com/sirpdboy/luci-app-timecontrol.git /tmp/luci-app-timecontrol
-          mv /tmp/luci-app-timecontrol/luci-app-timecontrol package/luci-app-timecontrol 
-          
+          echo "src-link myextra /tmp/myfeeds" >> feeds.conf
+          ./scripts/feeds update myextra
+          ./scripts/feeds install -a -p myextra
       - name: Install feeds
         run: |
           ./scripts/feeds update -a
           ./scripts/feeds install -a
-      
       - name: Load repository signing key
         env:
           PONWRT_APK_PRIVATE_KEY: ${{ secrets.PONWRT_APK_PRIVATE_KEY }}
@@ -92,26 +82,30 @@ jobs:
             printf '%s\n' "$PONWRT_APK_PRIVATE_KEY" > private-key.pem
             openssl ec -in private-key.pem -pubout -out public-key.pem
           fi
-
       - name: Configure ${{ matrix.target }}
         run: |
+          cp "configs/${{ matrix.target }}.config" tmp_target.config
+          cat >> tmp_target.config <<'EOF'
+CONFIG_PACKAGE_luci-app-airoha-npu=y
+CONFIG_PACKAGE_lucky=y
+CONFIG_PACKAGE_luci-app-lucky=y
+CONFIG_PACKAGE_luci-i18n-lucky-zh-cn=y
+CONFIG_PACKAGE_luci-app-timecontrol=y
+EOF
           ./scripts/kconfig.pl + \
-            "configs/${{ matrix.target }}.config" \
+            tmp_target.config \
             configs/release.config > .config
           make defconfig
-
+          grep -E "luci-app-airoha-npu|lucky|luci-app-timecontrol" .config
       - name: Download sources
         run: make download -j"$(nproc)"
-
       - name: Build ${{ matrix.target }}
         run: make -j"$(nproc)"
-
       - name: Pack ${{ matrix.target }}
         run: |
           mkdir release
           tar --zstd -cf "release/ponwrt-${{ matrix.target }}.tar.zst" \
             -C bin/targets/airoha "${{ matrix.target }}"
-
       - name: Upload ${{ matrix.target }}
         uses: actions/upload-artifact@v4
         with:
@@ -119,14 +113,12 @@ jobs:
           path: release/*.tar.zst
           if-no-files-found: error
           retention-days: 7
-
   release:
     name: Create release
     needs: build
     runs-on: ubuntu-24.04
     permissions:
       contents: write
-
     steps:
       - name: Download firmware archives
         uses: actions/download-artifact@v4
@@ -134,11 +126,9 @@ jobs:
           pattern: ponwrt-*
           path: release
           merge-multiple: true
-
       - name: Create checksums
         working-directory: release
         run: sha256sum *.tar.zst > sha256sums
-
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
