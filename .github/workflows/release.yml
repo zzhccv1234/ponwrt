@@ -86,12 +86,12 @@ jobs:
         run: |
           cp "configs/${{ matrix.target }}.config" tmp_target.config
           cat >> tmp_target.config <<'EOF'
-CONFIG_PACKAGE_luci-app-airoha-npu=y
-CONFIG_PACKAGE_lucky=y
-CONFIG_PACKAGE_luci-app-lucky=y
-CONFIG_PACKAGE_luci-i18n-lucky-zh-cn=y
-CONFIG_PACKAGE_luci-app-timecontrol=y
-EOF
+          CONFIG_PACKAGE_luci-app-airoha-npu=y
+          CONFIG_PACKAGE_lucky=y
+          CONFIG_PACKAGE_luci-app-lucky=y
+          CONFIG_PACKAGE_luci-i18n-lucky-zh-cn=y
+          CONFIG_PACKAGE_luci-app-timecontrol=y
+          EOF
           ./scripts/kconfig.pl + \
             tmp_target.config \
             configs/release.config > .config
