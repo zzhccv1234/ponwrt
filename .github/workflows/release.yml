@@ -68,15 +68,21 @@ jobs:
       - name: Clone luci-app-airoha-npu
         run: |
           git clone https://github.com/rchen14b/luci-app-airoha-npu.git package/luci-app-airoha-npu
+      
       - name: Clone luci-app-lucky
         run: |
           git clone https://github.com/gdy666/luci-app-lucky.git package/luci-app-lucky
+      
+      - name: Clone luci-app-timecontrol
+        run: |
+          git clone https://github.com/sirpdboy/luci-app-timecontrol.git /tmp/luci-app-timecontrol
+          mv /tmp/luci-app-timecontrol/luci-app-timecontrol package/luci-app-timecontrol 
           
       - name: Install feeds
         run: |
           ./scripts/feeds update -a
           ./scripts/feeds install -a
-
+      
       - name: Load repository signing key
         env:
           PONWRT_APK_PRIVATE_KEY: ${{ secrets.PONWRT_APK_PRIVATE_KEY }}
