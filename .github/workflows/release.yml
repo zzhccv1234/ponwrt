@@ -60,7 +60,7 @@ jobs:
         run: |
           mkdir -p /tmp/myfeeds
           git clone https://github.com/rchen14b/luci-app-airoha-npu.git /tmp/myfeeds/luci-app-airoha-npu
-          chmod +x /tmp/myfeeds/luci-app-airoha-npu/files/usr/libexec/rpcd/luci.airoha_npu
+          chmod +x /tmp/myfeeds/luci-app-airoha-npu/root/usr/libexec/rpcd/luci.airoha_npu
           git clone https://github.com/gdy666/luci-app-lucky.git /tmp/myfeeds/luci-app-lucky
           git clone https://github.com/sirpdboy/luci-app-timecontrol.git /tmp/tc_tmp
           mv /tmp/tc_tmp/luci-app-timecontrol /tmp/myfeeds/luci-app-timecontrol
