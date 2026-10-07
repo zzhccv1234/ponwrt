@@ -59,7 +59,13 @@ jobs:
       - name: Fetch extra luci packages
         run: |
           mkdir -p /tmp/myfeeds
-          git clone https://github.com/rchen14b/luci-app-airoha-npu.git /tmp/myfeeds/luci-app-airoha-npu
+          # airoha-npu 仓库布局混乱：根目录和嵌套的 luci-app-airoha-npu/ 子目录各有一份 Makefile，
+          # 嵌套那份的 include 路径是坏的。整目录放进 feed 会让该包无法生成 kconfig 条目（.config 里完全没符号）。
+          # 只取根目录规范的 Makefile（include feeds/luci/luci.mk）和 htdocs/root/po，构造干净包目录
+          git clone https://github.com/rchen14b/luci-app-airoha-npu.git /tmp/npu_tmp
+          mkdir -p /tmp/myfeeds/luci-app-airoha-npu
+          cp /tmp/npu_tmp/Makefile /tmp/myfeeds/luci-app-airoha-npu/
+          cp -R /tmp/npu_tmp/htdocs /tmp/npu_tmp/root /tmp/npu_tmp/po /tmp/myfeeds/luci-app-airoha-npu/
           chmod +x /tmp/myfeeds/luci-app-airoha-npu/root/usr/libexec/rpcd/luci.airoha_npu
           git clone https://github.com/gdy666/luci-app-lucky.git /tmp/myfeeds/luci-app-lucky
           git clone https://github.com/sirpdboy/luci-app-timecontrol.git /tmp/tc_tmp
