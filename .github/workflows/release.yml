@@ -65,18 +65,179 @@ jobs:
           git clone https://github.com/rchen14b/luci-app-airoha-npu.git /tmp/npu_tmp
           mkdir -p /tmp/myfeeds/luci-app-airoha-npu
           cp /tmp/npu_tmp/Makefile /tmp/myfeeds/luci-app-airoha-npu/
-          cp -R /tmp/npu_tmp/htdocs /tmp/npu_tmp/root /tmp/npu_tmp/po /tmp/myfeeds/luci-app-airoha-npu/
+          cp -R /tmp/npu_tmp/htdocs /tmp/npu_tmp/root /tmp/myfeeds/luci-app-airoha-npu/
           chmod +x /tmp/myfeeds/luci-app-airoha-npu/root/usr/libexec/rpcd/luci.airoha_npu
+          # 上游只提供西班牙语 po、无简体中文。这里注入 zh-cn 翻译，
+          # 以生成 luci-i18n-airoha-npu-zh-cn 语言包
+          mkdir -p /tmp/myfeeds/luci-app-airoha-npu/po/zh-cn
+          cat > /tmp/myfeeds/luci-app-airoha-npu/po/zh-cn/luci-app-airoha-npu.po <<'POEOF'
+          msgid ""
+          msgstr ""
+          "Project-Id-Version: 1.0.1\n"
+          "PO-Revision-Date: 2026-10-07\n"
+          "Last-Translator: Doubao\n"
+          "Language-Team: Chinese (Simplified)\n"
+          "Language: zh-cn\n"
+          "MIME-Version: 1.0\n"
+          "Content-Type: text/plain; charset=UTF-8\n"
+          "Content-Transfer-Encoding: 8bit\n"
+          "Plural-Forms: nplurals=1; plural=0;\n"
+          msgid "%d MHz is above %d MHz, which is as far as this has been tested. The board may run unstable or stop responding until it is power cycled."
+          msgstr "%d MHz 已超过已测试的上限 %d MHz，设备可能运行不稳定或失去响应，需重新上电才能恢复。"
+          msgid "%d sta"
+          msgstr "%d 个终端"
+          msgid "%d used / %d free (%s%%)"
+          msgstr "已用 %d / 空闲 %d（%s%%）"
+          msgid "%s (%d regions)"
+          msgstr "%s（%d 个区域）"
+          msgid "%s | %s | %d cores"
+          msgstr "%s | %s | %d 核"
+          msgid "8x RISC-V via PCIe RAM"
+          msgstr "8 核 RISC-V，经 PCIe 访问内存"
+          msgid "Active"
+          msgstr "活动"
+          msgid "Active (%s)"
+          msgstr "活动（%s）"
+          msgid "Airoha SoC Status"
+          msgstr "Airoha 芯片状态"
+          msgid "Apply"
+          msgstr "应用"
+          msgid "Applying..."
+          msgstr "正在应用..."
+          msgid "Band %d"
+          msgstr "频段 %d"
+          msgid "Bound"
+          msgstr "已绑定"
+          msgid "CPU Cores"
+          msgstr "CPU 核心"
+          msgid "CPU DMA 1"
+          msgstr "CPU DMA 1"
+          msgid "CPU DMA 2"
+          msgstr "CPU DMA 2"
+          msgid "CPU Frequency"
+          msgstr "CPU 频率"
+          msgid "CPU set to %d MHz"
+          msgstr "CPU 已设为 %d MHz"
+          msgid "CPU: %s"
+          msgstr "CPU：%s"
+          msgid "Cancel"
+          msgstr "取消"
+          msgid "Confirm overclock"
+          msgstr "确认超频"
+          msgid "Continue"
+          msgstr "继续"
+          msgid "Could not set the governor: %s"
+          msgstr "无法设置调度策略：%s"
+          msgid "Could not set the maximum frequency: %s"
+          msgstr "无法设置最大频率：%s"
+          msgid "Current Frequency"
+          msgstr "当前频率"
+          msgid "Direct PLL write, %d-%d MHz. Tested up to %d MHz."
+          msgstr "直接写入 PLL，%d-%d MHz，已测试至 %d MHz。"
+          msgid "Drop %s"
+          msgstr "丢弃 %s"
+          msgid "Error: %s"
+          msgstr "错误：%s"
+          msgid "Ethernet"
+          msgstr "以太网"
+          msgid "Failed: %s"
+          msgstr "失败：%s"
+          msgid "Fair"
+          msgstr "一般"
+          msgid "Firmware / Clock / Cores"
+          msgstr "固件 / 时钟 / 核心"
+          msgid "Frame Engine"
+          msgstr "帧引擎"
+          msgid "Good"
+          msgstr "良好"
+          msgid "Governor"
+          msgstr "调度策略"
+          msgid "Grant access to Airoha SoC status (NPU + CPU + Overclock)"
+          msgstr "授予访问 Airoha 芯片状态（NPU + CPU + 超频）"
+          msgid "HW Offload: %s%%"
+          msgstr "硬件卸载：%s%%"
+          msgid "HWF: %s"
+          msgstr "帧引擎：%s"
+          msgid "Idle"
+          msgstr "空闲"
+          msgid "Index"
+          msgstr "索引"
+          msgid "Internal Switch (1G LAN3/4)"
+          msgstr "内置交换机（1G LAN3/4）"
+          msgid "LAN2 (USXGMII 10G)"
+          msgstr "LAN2（USXGMII 10G）"
+          msgid "Manages:"
+          msgstr "管理："
+          msgid "Max Frequency"
+          msgstr "最大频率"
+          msgid "N/A"
+          msgstr "不可用"
+          msgid "NPU & Offload Engine"
+          msgstr "NPU 与卸载引擎"
+          msgid "NPU Status"
+          msgstr "NPU 状态"
+          msgid "New Flow"
+          msgstr "新建流"
+          msgid "No clients"
+          msgstr "无客户端"
+          msgid "Not Active"
+          msgstr "未活动"
+          msgid "Not available: unrecognised SoC"
+          msgstr "不可用：无法识别的芯片"
+          msgid "Off"
+          msgstr "关闭"
+          msgid "Original Flow"
+          msgstr "原始流"
+          msgid "Overclock"
+          msgstr "超频"
+          msgid "Overclock request failed: %s"
+          msgstr "超频请求失败：%s"
+          msgid "P7 WiFi DMA"
+          msgstr "P7 WiFi DMA"
+          msgid "PPE Engines"
+          msgstr "PPE 引擎"
+          msgid "PPE Flow Offload Entries"
+          msgstr "PPE 流卸载表项"
+          msgid "PPE init, WDMA rings, flow stats"
+          msgstr "PPE 初始化、WDMA 环、流统计"
+          msgid "PSE Port Queue Status"
+          msgstr "PSE 端口队列状态"
+          msgid "PSE Shared Buffer"
+          msgstr "PSE 共享缓存"
+          msgid "Poor"
+          msgstr "较差"
+          msgid "RX"
+          msgstr "接收"
+          msgid "RX Drop"
+          msgstr "接收丢弃"
+          msgid "Reserved Memory"
+          msgstr "预留内存"
+          msgid "SoC"
+          msgstr "芯片"
+          msgid "SoC Status"
+          msgstr "芯片状态"
+          msgid "State"
+          msgstr "状态"
+          msgid "TX"
+          msgstr "发送"
+          msgid "TX Drop"
+          msgstr "发送丢弃"
+          msgid "TX: %s"
+          msgstr "发送：%s"
+          msgid "The frequency must be between %d and %d MHz"
+          msgstr "频率必须在 %d 到 %d MHz 之间"
+          msgid "Total"
+          msgstr "总计"
+          msgid "Type"
+          msgstr "类型"
+          msgid "Unknown"
+          msgstr "未知"
+          msgid "WAN (USXGMII 10G)"
+          msgstr "WAN（USXGMII 10G）"
+          msgid "devmem is not available on this build"
+          msgstr "本固件未提供 devmem"
+          POEOF
           git clone https://github.com/gdy666/luci-app-lucky.git /tmp/myfeeds/luci-app-lucky
-          git clone https://github.com/sirpdboy/luci-app-timecontrol.git /tmp/tc_tmp
-          mv /tmp/tc_tmp/luci-app-timecontrol /tmp/myfeeds/luci-app-timecontrol
-          # airoha-npu: 去掉 @TARGET_airoha 条件。本固件只给 airoha 编译，该守卫多余；
-          # 且它会导致 kconfig 完全隐藏此包（.config 里连符号都没有），从而不编译、不显示
-          sed -i 's/ @TARGET_airoha//' /tmp/myfeeds/luci-app-airoha-npu/Makefile
-          # timecontrol: 原菜单挂在 sirpdboy 自定义的“控制”(admin/control) 顶级菜单下，
-          # PonWrt 没有这个父菜单导致整个菜单不渲染（包其实已安装）；改挂到“服务”(admin/services)
-          sed -i 's#admin/control/timecontrol#admin/services/timecontrol#g' \
-            /tmp/myfeeds/luci-app-timecontrol/root/usr/share/luci/menu.d/luci-app-timecontrol.json
       - name: Setup custom feed
         run: |
           # 必须先基于默认源创建 feeds.conf，否则直接 >> 会生成只含自定义源的文件，
@@ -101,16 +262,16 @@ jobs:
           cp "configs/${{ matrix.target }}.config" tmp_target.config
           cat >> tmp_target.config <<'EOF'
           CONFIG_PACKAGE_luci-app-airoha-npu=y
+          CONFIG_PACKAGE_luci-i18n-airoha-npu-zh-cn=y
           CONFIG_PACKAGE_lucky=y
           CONFIG_PACKAGE_luci-app-lucky=y
           CONFIG_PACKAGE_luci-i18n-lucky-zh-cn=y
-          CONFIG_PACKAGE_luci-app-timecontrol=y
           EOF
           ./scripts/kconfig.pl + \
             tmp_target.config \
             configs/release.config > .config
           make defconfig
-          grep -E "luci-app-airoha-npu|lucky|luci-app-timecontrol" .config
+          grep -E "airoha-npu|lucky" .config
       - name: Download sources
         run: make download -j"$(nproc)"
       - name: Build ${{ matrix.target }}
