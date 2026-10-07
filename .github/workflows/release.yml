@@ -66,9 +66,10 @@ jobs:
           mv /tmp/tc_tmp/luci-app-timecontrol /tmp/myfeeds/luci-app-timecontrol
       - name: Setup custom feed
         run: |
+          # 必须先基于默认源创建 feeds.conf，否则直接 >> 会生成只含自定义源的文件，
+          # 导致 luci/packages/pon_userspace 等标准 feed 全部丢失
+          cp feeds.conf.default feeds.conf
           echo "src-link myextra /tmp/myfeeds" >> feeds.conf
-          ./scripts/feeds update myextra
-          ./scripts/feeds install -a -p myextra
       - name: Install feeds
         run: |
           ./scripts/feeds update -a
