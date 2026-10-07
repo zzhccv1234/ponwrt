@@ -64,6 +64,13 @@ jobs:
           git clone https://github.com/gdy666/luci-app-lucky.git /tmp/myfeeds/luci-app-lucky
           git clone https://github.com/sirpdboy/luci-app-timecontrol.git /tmp/tc_tmp
           mv /tmp/tc_tmp/luci-app-timecontrol /tmp/myfeeds/luci-app-timecontrol
+          # airoha-npu: 去掉 @TARGET_airoha 条件。本固件只给 airoha 编译，该守卫多余；
+          # 且它会导致 kconfig 完全隐藏此包（.config 里连符号都没有），从而不编译、不显示
+          sed -i 's/ @TARGET_airoha//' /tmp/myfeeds/luci-app-airoha-npu/Makefile
+          # timecontrol: 原菜单挂在 sirpdboy 自定义的“控制”(admin/control) 顶级菜单下，
+          # PonWrt 没有这个父菜单导致整个菜单不渲染（包其实已安装）；改挂到“服务”(admin/services)
+          sed -i 's#admin/control/timecontrol#admin/services/timecontrol#g' \
+            /tmp/myfeeds/luci-app-timecontrol/root/usr/share/luci/menu.d/luci-app-timecontrol.json
       - name: Setup custom feed
         run: |
           # 必须先基于默认源创建 feeds.conf，否则直接 >> 会生成只含自定义源的文件，
